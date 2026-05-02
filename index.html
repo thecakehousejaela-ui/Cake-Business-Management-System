@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Cake House Jaela - Business Manager</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<base target="_blank">
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="login-screen" class="login-screen">
+        <div class="login-container">
+            <div class="login-logo">
+                <i class="fas fa-birthday-cake"></i>
+                <h1>The Cake House Jaela</h1>
+                <p>Business Management System</p>
+            </div>
+            <form id="login-form" class="login-form">
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" id="login-email" placeholder="admin@cakehouse.lk" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Password</label>
+                    <input type="password" id="login-password" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn-login">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </button>
+                <p class="login-hint">Default: admin@cakehouse.lk / admin123</p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="app" class="app hidden">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-birthday-cake"></i>
+                <span>The Cake House Jaela</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-page="dashboard">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" data-page="orders">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span>Orders</span>
+                </a>
+                <a href="#" class="nav-item" data-page="expenses">
+                    <i class="fas fa-wallet"></i>
+                    <span>Expenses</span>
+                </a>
+                <a href="#" class="nav-item" data-page="customers">
+                    <i class="fas fa-users"></i>
+                    <span>Customers</span>
+                </a>
+                <a href="#" class="nav-item" data-page="invoices">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <span>Invoices</span>
+                </a>
+                <a href="#" class="nav-item" data-page="reports">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Reports</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <button id="logout-btn" class="btn-logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Mobile Overlay -->
+        <div class="mobile-overlay" id="mobile-overlay"></div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Header -->
+            <header class="top-header">
+                <button class="menu-toggle" id="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="header-title" id="page-title">Dashboard</div>
+                <div class="header-actions">
+                    <div class="user-info">
+                        <i class="fas fa-user-circle"></i>
+                        <span id="user-name">Admin</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content-area" id="content-area">
+
+                <!-- Dashboard Page -->
+                <div class="page active" id="page-dashboard">
+                    <div class="stats-grid">
+                        <div class="stat-card sales">
+                            <div class="stat-icon"><i class="fas fa-money-bill-wave"></i></div>
+                            <div class="stat-info">
+                                <h3>Total Sales</h3>
+                                <p class="stat-value" id="dash-sales">LKR 0.00</p>
+                            </div>
+                        </div>
+                        <div class="stat-card expenses">
+                            <div class="stat-icon"><i class="fas fa-wallet"></i></div>
+                            <div class="stat-info">
+                                <h3>Total Expenses</h3>
+                                <p class="stat-value" id="dash-expenses">LKR 0.00</p>
+                            </div>
+                        </div>
+                        <div class="stat-card profit">
+                            <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                            <div class="stat-info">
+                                <h3>Net Profit</h3>
+                                <p class="stat-value" id="dash-profit">LKR 0.00</p>
+                            </div>
+                        </div>
+                        <div class="stat-card orders">
+                            <div class="stat-icon"><i class="fas fa-shopping-bag"></i></div>
+                            <div class="stat-info">
+                                <h3>Total Orders</h3>
+                                <p class="stat-value" id="dash-orders">0</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-grid">
+                        <div class="card chart-card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-chart-bar"></i> Sales vs Expenses</h3>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="main-chart"></canvas>
+                            </div>
+                        </div>
+                        <div class="card chart-card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-chart-pie"></i> Order Status</h3>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="status-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-clock"></i> Recent Orders</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="data-table" id="recent-orders-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Customer</th>
+                                            <th>Cake</th>
+                                            <th>Price</th>
+                                            <th>Status</th>
+                                            <th>Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Orders Page -->
+                <div class="page" id="page-orders">
+                    <div class="page-actions">
+                        <button class="btn btn-primary" id="btn-add-order">
+                            <i class="fas fa-plus"></i> New Order
+                        </button>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-shopping-bag"></i> All Orders</h3>
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="order-search" placeholder="Search orders...">
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="data-table" id="orders-table">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Customer</th>
+                                            <th>Phone</th>
+                                            <th>Cake Type</th>
+                                            <th>Size</th>
+                                            <th>Price</th>
+                                            <th>Advance</th>
+                                            <th>Balance</th>
+                                            <th>Delivery</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Expenses Page -->
+                <div class="page" id="page-expenses">
+                    <div class="page-actions">
+                        <button class="btn btn-primary" id="btn-add-expense">
+                            <i class="fas fa-plus"></i> Add Expense
+                        </button>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-wallet"></i> Expenses</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="data-table" id="expenses-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Item</th>
+                                            <th>Amount</th>
+                                            <th>Note</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Customers Page -->
+                <div class="page" id="page-customers">
+                    <div class="page-actions">
+                        <button class="btn btn-primary" id="btn-add-customer">
+                            <i class="fas fa-plus"></i> Add Customer
+                        </button>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-users"></i> Customers</h3>
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="customer-search" placeholder="Search customers...">
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="data-table" id="customers-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Phone</th>
+                                            <th>Email</th>
+                                            <th>Total Orders</th>
+                                            <th>Total Spent</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Invoices Page -->
+                <div class="page" id="page-invoices">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-file-invoice-dollar"></i> Generate Invoice</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="invoice-form">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Select Order</label>
+                                        <select id="invoice-order-select">
+                                            <option value="">-- Select an Order --</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Invoice Date</label>
+                                        <input type="date" id="invoice-date">
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary" id="btn-generate-invoice">
+                                    <i class="fas fa-magic"></i> Generate Invoice
+                                </button>
+                            </div>
+
+                            <div id="invoice-preview" class="invoice-preview hidden">
+                                <div class="invoice-paper" id="invoice-paper">
+                                    <div class="invoice-header">
+                                        <div class="invoice-brand">
+                                            <i class="fas fa-birthday-cake"></i>
+                                            <div>
+                                                <h2>The Cake House Jaela</h2>
+                                                <p>Homemade Cakes & Bakes</p>
+                                            </div>
+                                        </div>
+                                        <div class="invoice-meta">
+                                            <p><strong>Invoice #:</strong> <span id="inv-number"></span></p>
+                                            <p><strong>Date:</strong> <span id="inv-date"></span></p>
+                                        </div>
+                                    </div>
+                                    <div class="invoice-body">
+                                        <div class="invoice-to">
+                                            <h4>Bill To:</h4>
+                                            <p id="inv-customer"></p>
+                                            <p id="inv-phone"></p>
+                                        </div>
+                                        <table class="invoice-items">
+                                            <thead>
+                                                <tr>
+                                                    <th>Description</th>
+                                                    <th>Size</th>
+                                                    <th>Amount</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td id="inv-cake"></td>
+                                                    <td id="inv-size"></td>
+                                                    <td id="inv-price"></td>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td colspan="2"><strong>Total</strong></td>
+                                                    <td><strong id="inv-total"></strong></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2">Advance Paid</td>
+                                                    <td id="inv-advance"></td>
+                                                </tr>
+                                                <tr class="balance-row">
+                                                    <td colspan="2"><strong>Balance Due</strong></td>
+                                                    <td><strong id="inv-balance"></strong></td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                    <div class="invoice-footer">
+                                        <p><i class="fas fa-phone"></i> 0766555687</p>
+                                        <p>Thank you for choosing The Cake House Jaela!</p>
+                                    </div>
+                                </div>
+                                <div class="invoice-actions">
+                                    <button class="btn btn-primary" id="btn-download-pdf">
+                                        <i class="fas fa-download"></i> Download PDF
+                                    </button>
+                                    <button class="btn btn-success" id="btn-send-whatsapp">
+                                        <i class="fab fa-whatsapp"></i> Send via WhatsApp
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reports Page -->
+                <div class="page" id="page-reports">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-filter"></i> Report Filters</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="report-filters">
+                                <div class="form-group">
+                                    <label>Period</label>
+                                    <select id="report-period">
+                                        <option value="daily">Daily</option>
+                                        <option value="weekly">Weekly</option>
+                                        <option value="monthly">Monthly</option>
+                                        <option value="yearly">Yearly</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Start Date</label>
+                                    <input type="date" id="report-start">
+                                </div>
+                                <div class="form-group">
+                                    <label>End Date</label>
+                                    <input type="date" id="report-end">
+                                </div>
+                                <button class="btn btn-primary" id="btn-generate-report">
+                                    <i class="fas fa-sync"></i> Generate Report
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stats-grid" id="report-stats">
+                        <div class="stat-card sales">
+                            <div class="stat-icon"><i class="fas fa-money-bill-wave"></i></div>
+                            <div class="stat-info">
+                                <h3>Period Sales</h3>
+                                <p class="stat-value" id="report-sales">LKR 0.00</p>
+                            </div>
+                        </div>
+                        <div class="stat-card expenses">
+                            <div class="stat-icon"><i class="fas fa-wallet"></i></div>
+                            <div class="stat-info">
+                                <h3>Period Expenses</h3>
+                                <p class="stat-value" id="report-expenses">LKR 0.00</p>
+                            </div>
+                        </div>
+                        <div class="stat-card profit">
+                            <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                            <div class="stat-info">
+                                <h3>Net Profit</h3>
+                                <p class="stat-value" id="report-profit">LKR 0.00</p>
+                            </div>
+                        </div>
+                        <div class="stat-card orders">
+                            <div class="stat-icon"><i class="fas fa-shopping-bag"></i></div>
+                            <div class="stat-info">
+                                <h3>Orders Count</h3>
+                                <p class="stat-value" id="report-orders">0</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-grid">
+                        <div class="card chart-card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-chart-bar"></i> Sales Trend</h3>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="report-sales-chart"></canvas>
+                            </div>
+                        </div>
+                        <div class="card chart-card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-chart-pie"></i> Expense Breakdown</h3>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="report-expense-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal: Add/Edit Order -->
+    <div class="modal" id="order-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="order-modal-title"><i class="fas fa-shopping-bag"></i> New Order</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="order-form">
+                    <input type="hidden" id="order-id">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Customer Name *</label>
+                            <input type="text" id="order-customer" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Phone *</label>
+                            <input type="tel" id="order-phone" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Cake Type *</label>
+                            <select id="order-cake-type" required>
+                                <option value="">Select Cake</option>
+                                <option value="Chocolate">Chocolate Cake</option>
+                                <option value="Vanilla">Vanilla Cake</option>
+                                <option value="Strawberry">Strawberry Cake</option>
+                                <option value="Red Velvet">Red Velvet</option>
+                                <option value="Butterscotch">Butterscotch</option>
+                                <option value="Coffee">Coffee Cake</option>
+                                <option value="Fruit">Fruit Cake</option>
+                                <option value="Custom">Custom Design</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Size *</label>
+                            <select id="order-size" required>
+                                <option value="">Select Size</option>
+                                <option value="0.5kg">0.5 kg</option>
+                                <option value="1kg">1 kg</option>
+                                <option value="1.5kg">1.5 kg</option>
+                                <option value="2kg">2 kg</option>
+                                <option value="3kg">3 kg</option>
+                                <option value="5kg">5 kg</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Price (LKR) *</label>
+                            <input type="number" id="order-price" min="0" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Advance (LKR)</label>
+                            <input type="number" id="order-advance" min="0" step="0.01" value="0">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Balance (LKR)</label>
+                            <input type="number" id="order-balance" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Delivery Date *</label>
+                            <input type="date" id="order-date" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="order-status">
+                            <option value="Pending">Pending</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Notes</label>
+                        <textarea id="order-notes" rows="2"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary modal-close-btn">Cancel</button>
+                <button type="button" class="btn btn-primary" id="btn-save-order">Save Order</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Add/Edit Expense -->
+    <div class="modal" id="expense-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="expense-modal-title"><i class="fas fa-wallet"></i> Add Expense</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="expense-form">
+                    <input type="hidden" id="expense-id">
+                    <div class="form-group">
+                        <label>Date *</label>
+                        <input type="date" id="expense-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Item / Category *</label>
+                        <input type="text" id="expense-item" placeholder="e.g., Flour, Eggs, Packaging" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Amount (LKR) *</label>
+                        <input type="number" id="expense-amount" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Note</label>
+                        <textarea id="expense-note" rows="2"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary modal-close-btn">Cancel</button>
+                <button type="button" class="btn btn-primary" id="btn-save-expense">Save Expense</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Add/Edit Customer -->
+    <div class="modal" id="customer-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="customer-modal-title"><i class="fas fa-user"></i> Add Customer</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="customer-form">
+                    <input type="hidden" id="customer-id">
+                    <div class="form-group">
+                        <label>Name *</label>
+                        <input type="text" id="customer-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone *</label>
+                        <input type="tel" id="customer-phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="customer-email">
+                    </div>
+                    <div class="form-group">
+                        <label>Address</label>
+                        <textarea id="customer-address" rows="2"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary modal-close-btn">Cancel</button>
+                <button type="button" class="btn btn-primary" id="btn-save-customer">Save Customer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Customer History -->
+    <div class="modal" id="history-modal">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h3><i class="fas fa-history"></i> Order History</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="customer-history-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toast-message">Success!</span>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
